@@ -1,0 +1,16 @@
+# Upload this file and package.json at the root of the OVERDRIVE GitHub repository.
+services:
+  - type: web
+    name: overdrive
+    runtime: node
+    plan: free
+    numInstances: 1
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
