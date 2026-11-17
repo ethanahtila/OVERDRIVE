@@ -1,4 +1,4 @@
-# Deploy OVERDRIVE 1.0.0 on Render
+# Deploy OVERDRIVE 1.0.1 on Render
 
 OVERDRIVE is ready for a **Render Web Service**. One Node service hosts the browser game, artwork, bot play and online matchmaking. Do not choose Static Site: matchmaking needs the running server.
 
@@ -46,15 +46,15 @@ Do not set a Publish Directory and do not replace `npm start` with a static file
 
 ## 3. Check the live game
 
-1. Open the service's HTTPS URL. It should show **OVERDRIVE / VERSION 1.0.0**.
-2. Open the same address with `/health` appended. It should return JSON with `"ok":true` and `"version":"1.0.0"`.
+1. Open the service's HTTPS URL. It should show **OVERDRIVE / VERSION 1.0.1**.
+2. Open the same address with `/health` appended. It should return JSON with `"ok":true` and `"version":"1.0.1"`.
 3. Play a bot match. Bot mode does not require another player.
 4. To test online, open the same live address on two computers (or two separate browser windows for a quick check). On each, select **ONLINE** and **1 vs 1 · Duel**, then **FIND A MATCH**. Both players should enter the same match after the countdown.
 5. For a four-player free-for-all, all four players must select that format. Duel and free-for-all have separate queues. There is no room code and no bot backfill.
 
 The game automatically connects to `wss://` on its current HTTPS hostname at `/play`. You do not enter a separate WebSocket address or obtain another certificate. Players do not need to share Wi-Fi, although their network must allow HTTPS/WebSocket connections to the website.
 
-Keep this release at **one running service instance**. Queues and matches live in that process; multiple instances would create separate queues. Supporting several instances requires shared matchmaking infrastructure that is not included in 1.0.0.
+Keep this release at **one running service instance**. Queues and matches live in that process; multiple instances would create separate queues. Supporting several instances requires shared matchmaking infrastructure that is not included in 1.0.1.
 
 ## 4. Future updates
 

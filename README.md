@@ -1,90 +1,95 @@
-# OVERDRIVE — 1.0.0
+# OVERDRIVE — 1.0.1 · Momentum
 
-An original desktop-only 2D platform fighter. This is a **separate project from CU-Escape**; do not overwrite the CU-Escape repository or service with these files.
+An original desktop 2D platform fighter. Keep this project separate from CU-Escape. This update replaces the original stiff cutout motion and generic heavy swings with articulated animation, responsive movement and staged character/weapon techniques.
 
-## Deploy the browser game on Render
+## Play or deploy
 
-Use the included **render.yaml** to create a Node Web Service, or follow the exact GitHub/Render settings in **[DEPLOY_RENDER.md](DEPLOY_RENDER.md)**. The website and online matchmaking run together on one service. Upload the extracted project contents to a separate OVERDRIVE repository; keep CU-Escape separate. This deployment preparation retains game version **1.0.0**.
+For bot play, extract the ZIP and open `public/index.html` in a desktop browser. Keep all scripts and the `public/assets` folder together. Bot mode runs locally without matchmaking.
 
-## Play against bots immediately
+For the website and online multiplayer, deploy the included `render.yaml` as a **Render Node Web Service**, or follow **[DEPLOY_RENDER.md](DEPLOY_RENDER.md)**. Use `npm ci --omit=dev` to build, `npm start` to start and `/health` for the health check. Keep one running instance because matchmaking is held in memory.
 
-1. Extract the entire ZIP.
-2. Open `public/index.html` in a current desktop browser.
-3. Pick **VS BOTS**, a character, a weapon and an arena. Click **ENTER THE ARENA**.
-
-Keep the `public` folder intact, including its scripts and `assets` folder. No account, installation or internet connection is required for bot matches after the files are downloaded. If your browser restricts local files, use the server below.
-
-## Run the game server
-
-Install Node.js **24 or later**, then open a terminal in the extracted project folder:
+For local server testing, install Node 24 and run:
 
 ```sh
 npm ci
 npm start
 ```
 
-Open **http://localhost:3000**. That single server serves the game and real-player matchmaking. For another computer on a reachable local network, open the server computer's LAN address on port 3000. A firewall or university client isolation can prevent LAN access; being on the same Wi-Fi does not guarantee connectivity.
-
-For a public link, host **this project separately** on a Node-compatible web service with WebSocket support, using `npm ci` as the build/install command and `npm start` as the start command. The server reads the platform's `PORT` variable and binds to all interfaces. Health endpoint: `/health`. An HTTPS deployment automatically uses **WSS** on the same host. No third-party multiplayer service or database is needed.
-
-This ZIP does **not** create or deploy a public URL. Do not replace CU-Escape when setting up the new game.
+Then open http://localhost:3000. A hosted HTTPS site automatically connects to WSS at the same hostname. This ZIP does not publish or update the live service itself.
 
 ## Controls
 
 | Input | Action |
 | --- | --- |
 | A / D | Move left / right |
-| W / S | Aim attacks up / down in the 2D plane |
-| S | Drop through thin floating platforms |
-| Space | Jump; release and press again for a second jump |
-| Shift | Directional dash/dodge with brief invulnerability and a cooldown |
-| Left mouse | Light attack; hold to repeat |
-| Right mouse | Heavy attack; hold to charge, release to strike |
-| E | Pick up a nearby glowing weapon drop |
-| Escape | Pause bots or open the online match menu |
+| W / S | Aim attacks up / down |
+| S | Drop through thin platforms |
+| Space | Jump; release and press again to double jump |
+| Shift | Dash/dodge; air dodges also accept W/S for vertical direction |
+| Left mouse | Shared weapon light attacks; hold to chain attacks |
+| Right mouse | Hold to charge, release to perform a signature heavy |
+| W + right mouse | Rising signature |
+| S + right mouse | Falling signature |
+| E | Collect a nearby mystery pickup, revealing a random weapon |
+| Escape | Pause a bot match or open the online menu |
 
-There is gravity and no free flying. W aims upward; **Space** is the jump button. Online matches continue while the menu is open. Leaving or disconnecting forfeits the match. Backgrounding a bot match pauses it and releases held inputs.
+Everyone begins **unarmed**, including bots. Losing a stock also removes the weapon. Unarmed fighters can punch, kick and use their own heavy techniques. A/D moves horizontally; W/S chooses attack direction and drop-through behavior, not free flight. Space remains the jump button.
 
-## Fighters
+## Mystery weapons and light attacks
 
-All five fighters can use all fifteen weapons. Their powers modify heavy attacks, including projectiles, rather than restricting equipment.
+The fifteen armory entries are a **field guide**, not a starting loadout selector. Every pickup has the same mystery appearance. Its weapon is rolled when a player collects it; no model, name or weapon identifier appears in the pickup beforehand. E can replace an already-held weapon with a new random result. Online rolls happen on the server and are shared with all players.
 
-| Fighter | Power | Strength |
+Mystery pickups are present at match start and replenish every three seconds up to a bounded number. They are placed on reachable platform surfaces. Bots seek them when unarmed.
+
+The fifteen weapons remain Sabre, Greatsword, Spear, War hammer, Gauntlets, Longbow, Scythe, Hand cannon, Twin katars, Astral orb, Crescent axe, Bo staff, Chain whip, Rapier and Chakrams.
+
+**Light move timing and geometry are shared across characters for a given weapon.** Weapon types still have their own normal attacks; equipping a bow does not turn its light attack into a sword slash. Character damage stats can affect the final damage. A light chain cycles through three stages. Character powers now live in the heavy techniques rather than being a generic passive added to every heavy hit.
+
+## Distinct heavy techniques
+
+There are **75 named armed signatures**, one per character/weapon pairing, plus five unarmed signatures. Each supports side, rising and falling variants. A technique combines authored windup, movement, weapon/hit phases and recovery. The hit volumes, projectiles and rendered pose use the same phase clock.
+
+Examples:
+
+| Fighter | Sabre signature | Other examples |
 | --- | --- | --- |
-| Ember | Ignition | Strong damage and a short burn after heavy hits |
-| Lyra | Slipstream | Fast movement/recovery, a shorter dodge cooldown and stronger heavy launch |
-| Bastion | Stonebound | Highest defense, heavy knockback and ground tremor shots |
-| Nyx | Afterimage | Strong aerial control and a delayed echo after heavy hits |
-| Marin | Undertow | Balanced defense and movement; heavy hits pull and restore a little damage |
+| Ember | Cinder Cross: advancing cut into an eruption | Dragon Lance, Phoenix Rain, Furnace Descent |
+| Lyra | Gale Crossing: a crossing rush and wind finish | Zephyr Spiral, Skyfall Volley, Hurricane Halo |
+| Bastion | Iron Procession: braced cleave and groundbreak | Worldbreaker, Citadel Salvo, Continental Divide |
+| Nyx | Dusk Reversal: phase-step slash and an echo at the original position | Phantom Needle, Grave Waltz, Vanishing Point |
+| Marin | Undertow Waltz: retreating draw, cut and tidal surge | Riptide Spear, Ocean's Heart, Riverdance |
 
-Weapons: **Sabre, Greatsword, Spear, War hammer, Gauntlets, Longbow, Scythe, Hand cannon, Twin katars, Astral orb, Crescent axe, Bo staff, Chain whip, Rapier and Chakrams.** They differ in reach, speed, damage, launch, charge behavior and projectile/melee behavior. Bows fire charged spreads; cannons recoil; chakrams return; scythes hook; hammers launch upward. Weapon drops appear every nine seconds, up to four at a time. Every player starts with their selected weapon, or a randomized weapon if Random is selected.
+Techniques include multi-hit rushes, rising strikes, vaults, dives, hook/pull sequences, recoil shots, orbiting projectiles, thrown rings, flame pillars, wind funnels, stone waves, shadow weapons and tidal crests. These are composed original moves, not copied Brawlhalla animations. Upward specials have an airborne lift allowance to limit repeated recovery boosts.
 
-## Formats and arenas
+## Movement and animation
 
-- **VS BOTS** is entirely local and never enters online matchmaking. Choose one opponent or a four-fighter free-for-all and Apprentice, Contender or Veteran bot behavior. Bot character and weapon choices are randomized for each match.
-- **ONLINE** has separate two-player duel and four-player free-for-all queues. It waits for that many actual players; it never fills slots with bots. The arena is selected from the matched players' choices, so players do not need identical selections to match.
-- Players can independently choose **Random** for character and weapon.
-- **50 selectable arenas** span five regions: Highlands, Coast, Wildwood, Sanctum and Ashlands. Each has its own name and platform configuration. The arenas share six detailed environment paintings, with regional variants, cropping, atmosphere and distinct layouts; they are not fifty independently painted backdrops.
-- **Three stocks, four minutes.** Damage increases launch distance. Leaving the blast zone costs a stock. The last fighter standing wins; timeouts compare stocks, then lower damage, then KOs. Exact final ties are draws.
+- Faster ground acceleration, braking and reversals, with strong air steering.
+- A 0.10-second coyote window and 0.12-second jump buffer.
+- Variable jump height based on release, plus a second jump.
+- Short directional dodges with cooldown and brief invulnerability.
+- Movement remains available while charging and during light attacks. Committed heavy stages have their own motion; late recovery can be dodged out of.
+- Separately textured head, torso, arms, thighs, shins/boots and cloth replace the old horizontal-strip wobble. Joint poses blend continuously and include running, airborne tucking, landing compression, dodges, breathing and staged attacks.
+- Detailed painted weapon artwork replaces the basic drawings when artwork is available. A lightweight vector fallback remains available.
+- Offline rendering interpolates fixed physics steps. Online local movement predicts immediately, then reconciles acknowledged commands; remote fighters extrapolate briefly and smooth snapshots. Heavy pose clocks are advanced between snapshots.
 
-## Graphics and sound
+This is a 2D skeletal animation system, not millions of separate frames or motion capture. Network latency still affects authoritative hits and remote information; this update does not claim zero-latency play or rollback netcode.
 
-Detailed painted fighter cutouts and cinematic matte-painted environments are included locally. Fighters use procedural pose deformation, directional weapon animations, charge effects and hit particles. These are original 2D assets, not 3D character models or full frame-by-frame animation sets. Canvas renders smoothly at the display's resolution, with device-pixel ratio capped at two. A vector fallback remains available if artwork cannot load.
+## Modes, rules and performance
 
-Synthesized hit, jump, dodge, pickup and KO sounds have a local volume control that is available in the selection screen and match menu. Names and volume are remembered on that browser. There are no accounts, ranked progression, purchases or saved match records in 1.0.0.
+Select a bot duel or four-fighter bot free-for-all, with three bot behavior levels. Online has separate real-player duel and four-player queues, never filled by bots. Random character selection remains available. All five characters can use all fifteen weapons.
 
-## Online architecture and limits
+The fifty selectable arenas remain across five regions, with unique platform configurations and six shared detailed environment paintings. Three stocks, four minutes: launch opponents beyond the blast zones. Timeouts compare stocks, then damage, then KOs; exact ties draw.
 
-The Node server runs the shared combat simulation at 60 fixed steps per second and sends authoritative state about 20 times per second. Clients send controls, not positions or damage. Rendering smooths network snapshots; real network latency still applies. This first release does not implement rollback netcode, regional server selection, reconnection/resume or persistent accounts. Restarting the server ends active matches and waiting queues.
+The server simulates 60 fixed steps per second and broadcasts about 20 snapshots per second. Clients send bounded, sequenced inputs. Effects, projectiles, prediction history and queues are bounded. Body-part alpha bounds are precomputed and bundled; no runtime pixel scan is needed. A larger frame count is not used as a substitute for smooth motion.
 
-Static artwork is cached, transient effects and projectiles are bounded, inputs are normalized, stale inputs expire, cross-origin browser WebSocket connections are rejected and message size/rate are limited. Online play requires the same deployed game version for all players.
+Names and sound volume are saved in that browser. There are no accounts, purchases or persistent match records. Online games continue while the menu is open. Server restarts and disconnects end participation; there is no reconnect/resume in this release.
 
-## Validate
+## Verification
 
 ```sh
 npm test
 ```
 
-Tests cover all 75 fighter–weapon combinations, directional input/jump/dodge behavior, character powers, stocks and blast zones, randomized choices, all fifty arenas, deterministic simulation, real WebSocket matchmaking, simultaneous matches, disconnects, invalid input, actual browser-script menu flows and two game clients sending input through a local server. The UI tests execute the real client scripts in an emulated DOM; they do not replace manual browser/keyboard playtesting or public-network latency tests.
+Tests cover unarmed starts/respawns, hidden pickup rewards, all fifteen randomized results, all 75 armed signature definitions, directional variants, shared light moves, staged hits, movement and jump response, coyote time, buffering, dodge immunity, articulated poses, prediction parity, fifty-arena bot simulations, real WebSocket matchmaking, authoritative pickup reveal, input acknowledgements, disconnects and emulated client-script flows. A delayed-snapshot client test verifies that local movement occurs before a server reply.
 
-See `ARTWORK.md` for art provenance and generation prompts. Version 1.0.0 is the first playable foundation, with balance and animation intended to evolve through playtesting.
+The art and poses were rendered and inspected locally. Public Render deployment and full manual browser playtesting are not claimed. Playtesting should guide further animation and combat-balance tuning. See `UPDATE_1.0.1.md` and `ARTWORK.md` for release scope and artwork provenance.
