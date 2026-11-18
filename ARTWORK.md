@@ -44,3 +44,7 @@ Three.js supplies the browser graphics renderer under the MIT license. Its licen
 ## 1.0.3 — Choreography
 
 `public/motion.js` authors connected full-body key poses and interpolates them at render time. `src/fighter-renderer.js` consumes that motion with constrained limbs and attached weapons. `public/fighter2d.js` provides an original Canvas illustration fallback with the same timelines when WebGL is unavailable. The game does not download millions of animation images; the renderer evaluates intermediate poses continuously. The atlas batches normal gameplay fighters into one graphics-to-Canvas copy per frame. The game remains 2D.
+
+## 1.0.4 — Painted Motion
+
+The active game now draws complete illustrated sprite pictures with twenty motion-compensated in-between frames per key-pose transition. Four new source sheets were generated from the original roster: Ember, Lyra, Bastion and Marin. A generation usage limit prevented the Nyx sheet; his frames were baked from preserved painted component artwork using constrained full-body poses. The runtime does not assemble character limbs. Source files and prompt specifications are in `art-source/`, with `art-source/PROMPTS.md` documenting the generation and animation process. Forty dense atlases plus five source sheets are in `public/assets/sprites/`. The prior procedural 3D/vector renderers are not loaded by the production HTML.
