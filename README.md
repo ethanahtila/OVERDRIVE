@@ -1,21 +1,32 @@
-# OVERDRIVE — 1.0.1 · Momentum
+# OVERDRIVE — 1.0.3 · Choreography
 
-An original desktop 2D platform fighter. Keep this project separate from CU-Escape. This update replaces the original stiff cutout motion and generic heavy swings with articulated animation, responsive movement and staged character/weapon techniques.
+A desktop platform fighter with movement and combat on a **2D plane**. This update completes the combat animation pass with full-body choreography, attached weapons, connected neck/spine motion, and an animated Canvas fallback. Intentional attack movement locks and combat timing are preserved.
 
-## Play or deploy
+Keep this project separate from CU-Escape.
 
-For bot play, extract the ZIP and open `public/index.html` in a desktop browser. Keep all scripts and the `public/assets` folder together. Bot mode runs locally without matchmaking.
+## Deploy or play
 
-For the website and online multiplayer, deploy the included `render.yaml` as a **Render Node Web Service**, or follow **[DEPLOY_RENDER.md](DEPLOY_RENDER.md)**. Use `npm ci --omit=dev` to build, `npm start` to start and `/health` for the health check. Keep one running instance because matchmaking is held in memory.
+For Render, upload the project contents to the OVERDRIVE repository and use the included `render.yaml`, or follow **[DEPLOY_RENDER.md](DEPLOY_RENDER.md)**. Keep the existing single-instance **Node Web Service** configuration:
 
-For local server testing, install Node 24 and run:
+- Build: `npm ci --omit=dev`
+- Start: `npm start`
+- Health check: `/health`
+- Node: 24
 
-```sh
-npm ci
-npm start
-```
+The compiled graphics bundle is included. Render does not need a GPU, Blender, Three.js development dependencies or a separate graphics build: character rendering happens in players' browsers. HTTPS uses WSS on the same host. This ZIP does not publish itself.
 
-Then open http://localhost:3000. A hosted HTTPS site automatically connects to WSS at the same hostname. This ZIP does not publish or update the live service itself.
+For local play, install Node 24, run `npm ci` and `npm start`, then open http://localhost:3000. Bot mode also runs by opening `public/index.html` directly, provided the extracted public folder remains intact. Desktop WebGL 2 with hardware acceleration enables the 3D character renderer. Browsers without it use fully animated connected Canvas figures with the same body/weapon timelines. A notice identifies that fallback. Both renderers include attack animations; neither uses disassembled image limbs.
+
+## Review the animations
+
+Click **ANIMATION LAB** above the weapon field guide. Select any of the five fighters, fifteen weapons (or unarmed), direction and attack type:
+
+- Ground heavy
+- Shared aerial heavy
+- Dash-air / ghost-platform ground heavy
+- Shared light attacks
+
+Use slow motion, replay and the simulated opener-hit checkbox to inspect the finish and miss branches. The preview deliberately simulates the opener result so it is an animation inspection tool, not evidence that a particular opening always connects in a real match. Gameplay still requires a real hit. Normal speed is the default.
 
 ## Controls
 
@@ -24,72 +35,76 @@ Then open http://localhost:3000. A hosted HTTPS site automatically connects to W
 | A / D | Move left / right |
 | W / S | Aim attacks up / down |
 | S | Drop through thin platforms |
-| Space | Jump; release and press again to double jump |
-| Shift | Dash/dodge; air dodges also accept W/S for vertical direction |
-| Left mouse | Shared weapon light attacks; hold to chain attacks |
-| Right mouse | Hold to charge, release to perform a signature heavy |
-| W + right mouse | Rising signature |
-| S + right mouse | Falling signature |
-| E | Collect a nearby mystery pickup, revealing a random weapon |
-| Escape | Pause a bot match or open the online menu |
+| Space | Jump; release and press again for an air jump |
+| Shift | Dash/dodge; use W/S for vertical air-dodge direction |
+| Left mouse | Light attacks; hold to chain |
+| Right mouse | Hold to charge, release for heavy |
+| W + heavy | Up heavy |
+| S + heavy | Down heavy |
+| Aerial Shift, then heavy | Gravity cancel: ghost platform and ground signature |
+| E | Collect a mystery weapon pickup |
+| Escape | Pause bots or open the online menu |
 
-Everyone begins **unarmed**, including bots. Losing a stock also removes the weapon. Unarmed fighters can punch, kick and use their own heavy techniques. A/D moves horizontally; W/S chooses attack direction and drop-through behavior, not free flight. Space remains the jump button.
+Press heavy during the aerial dodge or within **0.26 seconds** of it to create the ghost platform. Starting heavy at the same time as Shift also works. This cancels the dodge, visibly places a temporary platform beneath you, and selects the **same character-specific ground move** that would be used on a real floor. It is available once before landing on a real platform. It does not refresh your jumps or another gravity cancel. Charging is bounded and releases automatically after a full hold.
 
-## Mystery weapons and light attacks
+## Heavy attacks and hit confirmation
 
-The fifteen armory entries are a **field guide**, not a starting loadout selector. Every pickup has the same mystery appearance. Its weapon is rolled when a player collects it; no model, name or weapon identifier appears in the pickup beforehand. E can replace an already-held weapon with a new random result. Online rolls happen on the server and are shared with all players.
+Each fighter has **side, up and down ground heavies for every weapon**: **225 armed ground signatures**, plus fifteen unarmed ground variants. Their animated phases drive the character, held weapon, hit volumes and projectiles together.
 
-Mystery pickups are present at match start and replenish every three seconds up to a bounded number. They are placed on reachable platform surfaces. Bots seek them when unarmed.
+Ground signatures have an anticipation, an opener, an unconditional follow-up, a hit-confirmed finisher and recovery. **Only connecting the opener unlocks the finisher.** The follow-up can still hit after a missed opener, but that later hit does not enable the finisher. Connecting openers can gather a target into the follow-up; the final blow releases it with damage-scaled knockback. Interrupting the attacker ends the sequence. This is a confirmed combat sequence, not a passive effect added to one large hit.
 
-The fifteen weapons remain Sabre, Greatsword, Spear, War hammer, Gauntlets, Longbow, Scythe, Hand cannon, Twin katars, Astral orb, Crescent axe, Bo staff, Chain whip, Rapier and Chakrams.
+Character-specific animation language:
 
-**Light move timing and geometry are shared across characters for a given weapon.** Weapon types still have their own normal attacks; equipping a bow does not turn its light attack into a sword slash. Character damage stats can affect the final damage. A light chain cycles through three stages. Character powers now live in the heavy techniques rather than being a generic passive added to every heavy hit.
+| Fighter | Abilities |
+| --- | --- |
+| Ember | Flame fists, dragon-shaped fire, phoenix forms and erupting columns |
+| Lyra | Sweeping wind forms, feathered gusts, crossing rushes and cyclones |
+| Bastion | Orbiting stone, armored strikes, raised rocks and groundbreaks |
+| Nyx | Phase steps, a full animated shadow double and echo weapons |
+| Marin | Gathering currents, flowing movement and filled tidal crests |
 
-## Distinct heavy techniques
+The weapon and direction change the actual attack sequence. A blade's cut, a spear thrust, a hammer descent, a gauntlet rush, a bow volley and a chain lash do not share one generic swing animation.
 
-There are **75 named armed signatures**, one per character/weapon pairing, plus five unarmed signatures. Each supports side, rising and falling variants. A technique combines authored windup, movement, weapon/hit phases and recovery. The hit volumes, projectiles and rendered pose use the same phase clock.
+### Aerial attacks
 
-Examples:
+A normal airborne heavy uses a **shared weapon-specific aerial moveset**. Side, up and down variants are identical across all five characters holding that weapon: **45 shared armed aerial attacks**, plus three unarmed variants. They have common timing, geometry, movement and base damage, and do not use character elemental finishers. Defender stats can still affect the resulting knockback. Upward aerial moves have a bounded recovery allowance.
 
-| Fighter | Sabre signature | Other examples |
-| --- | --- | --- |
-| Ember | Cinder Cross: advancing cut into an eruption | Dragon Lance, Phoenix Rain, Furnace Descent |
-| Lyra | Gale Crossing: a crossing rush and wind finish | Zephyr Spiral, Skyfall Volley, Hurricane Halo |
-| Bastion | Iron Procession: braced cleave and groundbreak | Worldbreaker, Citadel Salvo, Continental Divide |
-| Nyx | Dusk Reversal: phase-step slash and an echo at the original position | Phantom Needle, Grave Waltz, Vanishing Point |
-| Marin | Undertow Waltz: retreating draw, cut and tidal surge | Riptide Spear, Ocean's Heart, Riverdance |
+Ground and gravity-cancel heavies use the personal signature; ordinary air heavies use the shared moveset. Light attacks remain shared across characters for the held weapon, with weapon-specific animations and direction.
 
-Techniques include multi-hit rushes, rising strikes, vaults, dives, hook/pull sequences, recoil shots, orbiting projectiles, thrown rings, flame pillars, wind funnels, stone waves, shadow weapons and tidal crests. These are composed original moves, not copied Brawlhalla animations. Upward specials have an airborne lift allowance to limit repeated recovery boosts.
+## Characters, weapons and modes
 
-## Movement and animation
+Five fighters: Ember, Lyra, Bastion, Nyx and Marin. Every fighter can use every weapon.
 
-- Faster ground acceleration, braking and reversals, with strong air steering.
-- A 0.10-second coyote window and 0.12-second jump buffer.
-- Variable jump height based on release, plus a second jump.
-- Short directional dodges with cooldown and brief invulnerability.
-- Movement remains available while charging and during light attacks. Committed heavy stages have their own motion; late recovery can be dodged out of.
-- Separately textured head, torso, arms, thighs, shins/boots and cloth replace the old horizontal-strip wobble. Joint poses blend continuously and include running, airborne tucking, landing compression, dodges, breathing and staged attacks.
-- Detailed painted weapon artwork replaces the basic drawings when artwork is available. A lightweight vector fallback remains available.
-- Offline rendering interpolates fixed physics steps. Online local movement predicts immediately, then reconciles acknowledged commands; remote fighters extrapolate briefly and smooth snapshots. Heavy pose clocks are advanced between snapshots.
+Fifteen weapons: Sabre, Greatsword, Spear, War hammer, Gauntlets, Longbow, Scythe, Hand cannon, Twin katars, Astral orb, Crescent axe, Bo staff, Chain whip, Rapier and Chakrams.
 
-This is a 2D skeletal animation system, not millions of separate frames or motion capture. Network latency still affects authoritative hits and remote information; this update does not claim zero-latency play or rollback netcode.
+Everyone starts and respawns **unarmed**. Pickups all have the same mystery appearance and reveal a random weapon only when collected. The armory is a field guide, not a starting loadout selector. In online matches only the server assigns the result. Bots follow the same rule.
 
-## Modes, rules and performance
+VS BOTS stays local and separate from online queues. It supports duels or four-fighter free-for-all and three bot behavior levels. ONLINE has separate real-player duel and four-player queues with no bot backfill. Random character selection remains available. Fifty selectable arenas remain across five regions. Three stocks and four minutes; timeouts compare stocks, damage and KOs, with exact ties drawing.
 
-Select a bot duel or four-fighter bot free-for-all, with three bot behavior levels. Online has separate real-player duel and four-player queues, never filled by bots. Random character selection remains available. All five characters can use all fifteen weapons.
+## Animation and technical scope
 
-The fifty selectable arenas remain across five regions, with unique platform configurations and six shared detailed environment paintings. Three stocks, four minutes: launch opponents beyond the blast zones. Timeouts compare stocks, then damage, then KOs; exact ties draw.
+Authored full-body key poses are interpolated continuously through anticipation, contact, follow-through and recovery. The pelvis, ribcage, head, both hands and both feet all participate. Complete smooth meshes are posed with constrained limbs, attached weapons, continuous stage-to-stage transitions, running cycles, jumping, rolling, breathing and animated cloth. The neck follows the actual animated head, and the torso follows the spine. Hit recoil and flashes are presentation only, and do not add impact pauses or change combat timing. Paired weapons follow both hands; bowstrings draw, chain links flex and orb rings rotate. The body and weapon evaluate fresh poses at render time. This is continuous animation, not a promise of millions of downloaded sprite frames.
 
-The server simulates 60 fixed steps per second and broadcasts about 20 snapshots per second. Clients send bounded, sequenced inputs. Effects, projectiles, prediction history and queues are bounded. Body-part alpha bounds are precomputed and bundled; no runtime pixel scan is needed. A larger frame count is not used as a substitute for smooth motion.
+The models are original procedural, stylized fantasy models. They are not scanned people, motion capture or photorealistic character assets. An atlas batches the main fighters into one GPU-to-Canvas transfer per rendered frame instead of performing a separate readback for each fighter. Actual performance depends on the browser and graphics hardware; no measured frame-rate improvement is claimed. The older environment paintings remain. Filled fire/wind/water/stone/shadow constructs and impact animation complement the models; trails are supplemental.
 
-Names and sound volume are saved in that browser. There are no accounts, purchases or persistent match records. Online games continue while the menu is open. Server restarts and disconnects end participation; there is no reconnect/resume in this release.
+The server retains 60-step authoritative combat, about 20 snapshots per second, bounded sequenced inputs and one-process matchmaking. Local input prediction and render interpolation remain. New hit confirmation and ghost-platform state travel through the existing snapshots. Real network latency remains; this release does not implement rollback or reconnect/resume. Server restarts end matches and queues. No database or account migration is needed.
 
-## Verification
+The browser bundle is self-contained and has no CDN dependency. It includes Three.js under its MIT license; see `public/assets/THREE-LICENSE.txt`. Its editable source is `src/fighter-renderer.js`. To edit/rebuild the renderer locally:
 
 ```sh
+npm ci
+npm run build:avatars
 npm test
 ```
 
-Tests cover unarmed starts/respawns, hidden pickup rewards, all fifteen randomized results, all 75 armed signature definitions, directional variants, shared light moves, staged hits, movement and jump response, coyote time, buffering, dodge immunity, articulated poses, prediction parity, fifty-arena bot simulations, real WebSocket matchmaking, authoritative pickup reveal, input acknowledgements, disconnects and emulated client-script flows. A delayed-snapshot client test verifies that local movement occurs before a server reply.
+Commit `public/fighters3d.js` with renderer-source changes. Production installation intentionally omits the development build tools.
 
-The art and poses were rendered and inspected locally. Public Render deployment and full manual browser playtesting are not claimed. Playtesting should guide further animation and combat-balance tuning. See `UPDATE_1.0.1.md` and `ARTWORK.md` for release scope and artwork provenance.
+## Verification and limits
+
+41 automated tests pass. Coverage includes all 225 ground animation curves, exact shared aerial poses, joint continuity at phase boundaries, weapons attached across more than 3,000 3D poses, all 240 armed/unarmed ground sequences in the Canvas fallback, batched renderer orchestration, hit/miss finisher logic, ghost platforms, all fifty arenas, actual WebSocket matchmaking and emulated client/Animation Lab flows.
+
+A separate regression comparison matched the previous release's gameplay state for 92,072 simulation ticks across all fifty arenas, excluding version and new presentation fields. The intended heavy-attack movement/jump lock, including recovery, remains intact. Physics, attacks, pickup rules, damage and bot behavior are preserved.
+
+Actual model geometry and twenty representative move poses were rendered offline and visually inspected. A headless Chromium launch was attempted but the environment prevented it from starting; an interactive browser/WebGL playtest is not claimed. Renderer batching is tested with a mocked graphics backend, not a GPU performance benchmark. Public Render deployment is not performed by this ZIP.
+
+See `UPDATE_1.0.3.md` for this update. The file name remains `OVERDRIVE.zip`.

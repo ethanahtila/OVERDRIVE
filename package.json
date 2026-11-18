@@ -1,16 +1,21 @@
 {
   "name": "overdrive",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": true,
-  "description": "OVERDRIVE \u2014 a desktop platform fighter. Original characters, universal weapons, fifty arenas, bots and online matchmaking.",
+  "description": "OVERDRIVE — a desktop platform fighter. Original characters, universal weapons, fifty arenas, bots and online matchmaking.",
   "engines": {
     "node": ">=24 <25"
   },
   "scripts": {
     "start": "node server.cjs",
-    "test": "node --test test/*.test.cjs"
+    "test": "node --test test/*.test.cjs",
+    "build:avatars": "esbuild src/fighter-renderer.js --bundle --format=iife --target=es2022 --minify --outfile=public/fighters3d.js"
   },
   "dependencies": {
     "ws": "8.22.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "three": "0.187.0"
   }
 }

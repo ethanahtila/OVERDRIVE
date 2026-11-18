@@ -31,3 +31,16 @@ Final equipment generation prompt:
 Final equipment cleanup prompt:
 
 “Clean up this videogame equipment sprite atlas. Remove ALL smoky grey haze, ambient glows, cast shadows and stray marks BETWEEN and AROUND the fifteen equipment icons. The background must be genuinely 100 percent transparent clear alpha everywhere outside the actual metal, wood, leather and luminous crystal objects. Preserve every item's exact position, layout, shape, detailed design and color. Preserve the exact three-column five-row arrangement and the original canvas dimensions. Do not add anything. Keep only the fifteen fully opaque crisp object silhouettes with clean anti-aliased edges on a transparent background. No grey panels, no fog, no smoke, no decorative background effects.”
+
+## 1.0.2: connected model renderer
+
+The active character renderer is now original code-defined connected 3D geometry in `src/fighter-renderer.js`, bundled into `public/fighters3d.js`. It uses constrained limb placement, complete heads/torso/limbs, attached weapon models and deforming cloth, with smooth materials and light. The game remains on a 2D plane. Fire, wind, stone, water and shadow constructs are animated by `public/combat-fx.js`.
+
+The old generated body-part atlas is no longer loaded or shipped as an active asset. The original whole-character image is only a compatibility fallback for browsers that cannot create the full WebGL renderer. Earlier prompt records above document previous releases; they do not describe the current model-generation method. The environment paintings and equipment field-guide art remain locally bundled.
+
+Three.js supplies the browser graphics renderer under the MIT license. Its license is included at `public/assets/THREE-LICENSE.txt`. The character and weapon geometry, poses, combat timelines and effects are project code. No generated claim of photorealistic models or motion capture is made.
+
+
+## 1.0.3 — Choreography
+
+`public/motion.js` authors connected full-body key poses and interpolates them at render time. `src/fighter-renderer.js` consumes that motion with constrained limbs and attached weapons. `public/fighter2d.js` provides an original Canvas illustration fallback with the same timelines when WebGL is unavailable. The game does not download millions of animation images; the renderer evaluates intermediate poses continuously. The atlas batches normal gameplay fighters into one graphics-to-Canvas copy per frame. The game remains 2D.
