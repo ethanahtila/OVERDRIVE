@@ -1,0 +1,29 @@
+OVERDRIVE 1.0.5 — Separate Character Folders
+
+Use the repository top level, or the folder configured as Render's Root Directory if you set one.
+
+1. Extract OVERDRIVE.zip. Upload ALL the small files inside it to the TOP LEVEL of your existing GitHub repository in ONE commit. Replace files with matching names. This main package has no public folder. The new server uses game-client.json and ignores any old public folder already in your repository.
+
+2. Extract each of the five separate character downloads. Each contains ONE lowercase folder: ember, lyra, bastion, nyx, or marin. Upload that folder to the SAME TOP LEVEL of the GitHub repository. Upload one character folder per commit. Keep the folder name. Each folder is under 19 MiB and contains 9 images.
+
+3. Your GitHub repository should show these items side by side:
+   server.cjs
+   game-client.json
+   game-core.cjs
+   game-motion.cjs
+   package.json
+   package-lock.json
+   render.yaml
+   ember/        (9 WebP images)
+   lyra/         (9 WebP images)
+   bastion/      (9 WebP images)
+   nyx/          (9 WebP images)
+   marin/        (9 WebP images)
+
+4. Once all five folders are committed, let Render finish deploying the latest commit. Existing settings stay: Build = npm ci --omit=dev; Start = npm start; Health check = /health; Node = 24; one Node Web Service instance.
+
+5. Open your game. Its menu should say version 1.0.5. Click CHECK FOLDERS. A complete upload shows 45/45 images, with 9/9 for every character. You can also open your game link with /graphics-status added. /health should show version 1.0.5.
+
+Upload the extracted files and folders, not the ZIP downloads. The character folders belong beside server.cjs, not inside public, assets, or an extra OVERDRIVE folder. The sprite packs must be extracted: their ZIP files are not read by the game.
+
+The main package includes the original detailed roster, weapon and background artwork. Missing animation images return a safe 404 and are listed in the folder check; they no longer crash the Node server. Existing painted animation image bytes and combat rules are preserved.
