@@ -1,6 +1,6 @@
 (function(root,factory){const value=factory(typeof module==='object'&&module.exports?require('./motion.js'):root.FighterMotion);if(typeof module==='object'&&module.exports)module.exports=value;else root.Fight=value;})(typeof globalThis!=='undefined'?globalThis:this,(Motion)=>{
 'use strict';
-const VERSION='1.0.3',DT=1/60,W=1440,H=900,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const VERSION='1.0.4',DT=1/60,W=1440,H=900,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const characters=[
 {id:'ember',name:'Ember',role:'The furnace duelist',power:'Ignition',color:'#ff9b64',dark:'#7d3b35',stats:[9,6,5,7],description:'Drive through foes with blazing weapon combinations, rising cuts and eruptions.',mechanic:'Advancing fire combinations · explosive finishers',look:'knight'},
 {id:'lyra',name:'Lyra',role:'The storm runner',power:'Slipstream',color:'#93dce6',dark:'#356b83',stats:[5,10,4,8],description:'Vault, spiral and cross the arena with wind-carried weapon techniques.',mechanic:'Aerial movement · crossing rushes · wind blades',look:'ranger'},
